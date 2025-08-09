@@ -1,3 +1,6 @@
+import { Link } from "react-router-dom";
+import { Button } from "./ui/button";
+
 const Hero = () => {
   return (
     <section className="py-16 md:py-24 bg-gradient-to-b from-background to-secondary/30">
@@ -14,6 +17,12 @@ const Hero = () => {
             Descubra nossa coleção exclusiva de peças em cerâmica fria, 
             criadas com amor e dedicação para transformar sua casa em um lar ainda mais especial.
           </p>
+
+          <div className="mt-8">
+            <Button asChild>
+              <Link to="/personalizados">Peça um personalizado</Link>
+            </Button>
+          </div>
         </div>
       </div>
     </section>

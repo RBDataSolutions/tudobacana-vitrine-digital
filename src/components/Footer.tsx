@@ -43,6 +43,13 @@ const Footer = () => {
             </a>
           </div>
 
+          {/* Internal Links */}
+          <div className="mt-4 text-center">
+            <a href="/personalizados" className="underline underline-offset-4 hover:no-underline">
+              Pedidos personalizados
+            </a>
+          </div>
+
           {/* Divider */}
           <div className="w-full h-px bg-primary-foreground/20"></div>
 
