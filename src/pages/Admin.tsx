@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { LogOut, Plus, Edit, Trash2, Upload, Package, ShoppingBag, FileText } from 'lucide-react';
+import { LogOut, Plus, Edit, Trash2, Upload, Package, ShoppingBag, FileText, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -225,9 +225,19 @@ const Admin = () => {
       {/* Header */}
       <header className="bg-card border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="brand-title text-2xl">Painel Admin</h1>
-            <p className="text-muted-foreground">tudobacana cerâmicas</p>
+          <div className="flex items-center gap-4">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate('/')}
+              className="gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Voltar ao Site
+            </Button>
+            <div>
+              <h1 className="brand-title text-2xl">Painel Admin</h1>
+              <p className="text-muted-foreground">tudobacana cerâmicas</p>
+            </div>
           </div>
           <Button variant="outline" onClick={handleSignOut} className="gap-2">
             <LogOut className="w-4 h-4" />
