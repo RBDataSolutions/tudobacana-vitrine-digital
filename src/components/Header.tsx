@@ -1,9 +1,7 @@
-import { useState } from 'react';
-import { LogIn, User } from 'lucide-react';
+import { LogIn } from 'lucide-react';
 import { Button } from './ui/button';
 
 const Header = () => {
-  const [isAdmin, setIsAdmin] = useState(false);
 
   return (
     <header className="bg-background border-b border-border/50 sticky top-0 z-40 backdrop-blur-sm">
@@ -21,17 +19,15 @@ const Header = () => {
           
           {/* Admin Button */}
           <div className="absolute right-4 top-1/2 -translate-y-1/2">
-            {!isAdmin ? (
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
-                <LogIn className="w-4 h-4 mr-2" />
-                Admin
-              </Button>
-            ) : (
-              <Button variant="ghost" size="sm" className="text-primary">
-                <User className="w-4 h-4 mr-2" />
-                Painel
-              </Button>
-            )}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-muted-foreground hover:text-primary"
+              onClick={() => window.location.href = '/auth'}
+            >
+              <LogIn className="w-4 h-4 mr-2" />
+              Admin
+            </Button>
           </div>
         </div>
       </div>

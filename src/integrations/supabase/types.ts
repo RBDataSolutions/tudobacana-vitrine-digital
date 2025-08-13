@@ -14,7 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      custom_orders: {
+        Row: {
+          created_at: string
+          descricao: string
+          email: string
+          id: string
+          imagem_referencia_url: string | null
+          nome: string
+          observacoes_admin: string | null
+          orcamento: number | null
+          preferencias: string | null
+          status: string
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          created_at?: string
+          descricao: string
+          email: string
+          id?: string
+          imagem_referencia_url?: string | null
+          nome: string
+          observacoes_admin?: string | null
+          orcamento?: number | null
+          preferencias?: string | null
+          status?: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          created_at?: string
+          descricao?: string
+          email?: string
+          id?: string
+          imagem_referencia_url?: string | null
+          nome?: string
+          observacoes_admin?: string | null
+          orcamento?: number | null
+          preferencias?: string | null
+          status?: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          ativo: boolean
+          categoria: string
+          created_at: string
+          descricao: string | null
+          id: string
+          imagem_url: string | null
+          nome: string
+          preco: number
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          categoria: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          imagem_url?: string | null
+          nome: string
+          preco: number
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          categoria?: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          imagem_url?: string | null
+          nome?: string
+          preco?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

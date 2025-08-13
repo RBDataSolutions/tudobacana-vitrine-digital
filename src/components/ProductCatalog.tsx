@@ -1,47 +1,92 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Heart, ShoppingBag } from 'lucide-react';
 import { Button } from './ui/button';
+import { supabase } from '@/integrations/supabase/client';
 import produto1 from '../assets/produto-1.jpg';
 import produto2 from '../assets/produto-2.jpg';
 import produto3 from '../assets/produto-3.jpg';
 import produto4 from '../assets/produto-4.jpg';
 
-// Mock data para demonstração
+// Mock data para demonstração (fallback)
 const mockProducts = [
   {
-    id: 1,
+    id: "1",
     nome: "Bowl Artesanal Terra",
     preco: 89.90,
     imagem_url: produto1,
-    categoria: "Bowls"
+    categoria: "Bowls",
+    ativo: true
   },
   {
-    id: 2,
+    id: "2",
     nome: "Vaso Curves Naturais",
     preco: 125.50,
     imagem_url: produto2,
-    categoria: "Vasos"
+    categoria: "Vasos",
+    ativo: true
   },
   {
-    id: 3,
+    id: "3",
     nome: "Conjunto Pratos Rústicos",
     preco: 145.00,
     imagem_url: produto3,
-    categoria: "Conjuntos"
+    categoria: "Conjuntos",
+    ativo: true
   },
   {
-    id: 4,
+    id: "4",
     nome: "Caneca Cozy Morning",
     preco: 65.00,
     imagem_url: produto4,
-    categoria: "Canecas"
+    categoria: "Canecas",
+    ativo: true
   }
 ];
 
-const ProductCatalog = () => {
-  const [favorites, setFavorites] = useState<number[]>([]);
+interface Product {
+  id: string;
+  nome: string;
+  preco: number;
+  imagem_url?: string;
+  categoria: string;
+  ativo: boolean;
+}
 
-  const toggleFavorite = (productId: number) => {
+const ProductCatalog = () => {
+  const [products, setProducts] = useState<Product[]>(mockProducts);
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('ativo', true)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Erro ao carregar produtos:', error);
+        // Mantém os produtos mock em caso de erro
+        return;
+      }
+
+      if (data && data.length > 0) {
+        setProducts(data);
+      }
+    } catch (error) {
+      console.error('Erro ao conectar com o banco:', error);
+      // Mantém os produtos mock em caso de erro
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const toggleFavorite = (productId: string) => {
     setFavorites(prev => 
       prev.includes(productId) 
         ? prev.filter(id => id !== productId)
@@ -70,7 +115,19 @@ const ProductCatalog = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {mockProducts.map((product, index) => (
+          {isLoading ? (
+            // Loading skeleton
+            Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="card-elegant animate-pulse">
+                <div className="bg-muted rounded-lg mb-4 aspect-square"></div>
+                <div className="space-y-3">
+                  <div className="h-6 bg-muted rounded w-3/4"></div>
+                  <div className="h-8 bg-muted rounded w-1/2"></div>
+                </div>
+              </div>
+            ))
+          ) : (
+            products.map((product, index) => (
             <div 
               key={product.id} 
               className="card-elegant hover-lift group"
@@ -125,7 +182,8 @@ const ProductCatalog = () => {
                 </div>
               </div>
             </div>
-          ))}
+          ))
+        )}
         </div>
 
         {/* Call to Action */}

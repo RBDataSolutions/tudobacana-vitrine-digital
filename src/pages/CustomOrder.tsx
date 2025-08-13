@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const schema = z.object({
   nome: z.string().min(2, "Informe seu nome"),
@@ -74,16 +75,35 @@ const CustomOrder = () => {
     reader.readAsDataURL(file);
   };
 
-  const onSubmit = (values: FormValues) => {
-    // Aqui integraremos com Supabase (mensagens/solicitações + Storage). Por enquanto, apenas feedback.
-    // eslint-disable-next-line no-console
-    console.log("Solicitação de personalizado:", values);
-    toast({
-      title: "Solicitação enviada",
-      description: "Vamos avaliar sua ideia e retornaremos com um orçamento em breve.",
-    });
-    form.reset();
-    setPreview(null);
+  const onSubmit = async (values: FormValues) => {
+    try {
+      const { error } = await supabase
+        .from('custom_orders')
+        .insert([{
+          nome: values.nome,
+          email: values.email,
+          whatsapp: values.whatsapp || null,
+          descricao: values.descricao,
+          preferencias: values.preferencias || null,
+          status: 'pendente'
+        }]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Solicitação enviada com sucesso!",
+        description: "Vamos avaliar sua ideia e retornaremos com um orçamento em breve.",
+      });
+
+      form.reset();
+      setPreview(null);
+    } catch (error: any) {
+      toast({
+        title: "Erro ao enviar solicitação",
+        description: error.message || "Tente novamente mais tarde.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
