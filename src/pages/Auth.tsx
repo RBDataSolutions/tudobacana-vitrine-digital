@@ -12,7 +12,6 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isSignUp, setIsSignUp] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -31,45 +30,24 @@ const Auth = () => {
     setIsLoading(true);
 
     try {
-      if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/admin`
-          }
-        });
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-        if (error) throw error;
+      if (error) throw error;
 
-        toast({
-          title: "Cadastro realizado!",
-          description: "Verifique seu e-mail para confirmar a conta.",
-        });
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+      toast({
+        title: "Login realizado com sucesso!",
+        description: "Redirecionando para o painel administrativo...",
+      });
 
-        if (error) throw error;
-
-        toast({
-          title: "Login realizado com sucesso!",
-          description: "Redirecionando para o painel administrativo...",
-        });
-
-        navigate('/admin');
-      }
+      navigate('/admin');
     } catch (error: any) {
       let errorMessage = "Erro ao realizar a operação";
       
       if (error.message.includes('Invalid login credentials')) {
         errorMessage = "E-mail ou senha incorretos";
-      } else if (error.message.includes('User already registered')) {
-        errorMessage = "Usuário já cadastrado. Faça login.";
-      } else if (error.message.includes('Password should be at least')) {
-        errorMessage = "A senha deve ter pelo menos 6 caracteres";
       }
 
       toast({
@@ -90,7 +68,7 @@ const Auth = () => {
             <LogIn className="w-6 h-6 text-primary" />
           </div>
           <CardTitle className="brand-title text-2xl">
-            {isSignUp ? 'Cadastro Admin' : 'Login Admin'}
+            Login Admin
           </CardTitle>
           <p className="text-muted-foreground">
             Acesse o painel administrativo do tudobacana
@@ -135,21 +113,8 @@ const Auth = () => {
               className="w-full btn-brand"
               disabled={isLoading}
             >
-              {isLoading ? 'Carregando...' : (isSignUp ? 'Cadastrar' : 'Entrar')}
+              {isLoading ? 'Carregando...' : 'Entrar'}
             </Button>
-
-            <div className="text-center">
-              <button
-                type="button"
-                onClick={() => setIsSignUp(!isSignUp)}
-                className="text-sm text-primary hover:underline"
-              >
-                {isSignUp 
-                  ? 'Já tem conta? Fazer login' 
-                  : 'Não tem conta? Cadastrar'
-                }
-              </button>
-            </div>
           </form>
         </CardContent>
       </Card>

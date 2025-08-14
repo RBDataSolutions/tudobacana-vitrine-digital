@@ -46,6 +46,7 @@ const Admin = () => {
     nome: '',
     preco: '',
     categoria: '',
+    categoriaCustom: '',
     descricao: '',
     imagem_url: ''
   });
@@ -129,7 +130,7 @@ const Admin = () => {
       const productData = {
         nome: productForm.nome,
         preco: parseFloat(productForm.preco),
-        categoria: productForm.categoria,
+        categoria: productForm.categoria === 'Outros' ? productForm.categoriaCustom : productForm.categoria,
         descricao: productForm.descricao,
         imagem_url: productForm.imagem_url
       };
@@ -159,7 +160,7 @@ const Admin = () => {
         });
       }
 
-      setProductForm({ nome: '', preco: '', categoria: '', descricao: '', imagem_url: '' });
+      setProductForm({ nome: '', preco: '', categoria: '', categoriaCustom: '', descricao: '', imagem_url: '' });
       setEditingProduct(null);
       setIsProductDialogOpen(false);
       fetchProducts();
@@ -179,7 +180,8 @@ const Admin = () => {
     setProductForm({
       nome: product.nome,
       preco: product.preco.toString(),
-      categoria: product.categoria,
+      categoria: ['Bowls', 'Vasos', 'Conjuntos', 'Canecas', 'Pratos'].includes(product.categoria) ? product.categoria : 'Outros',
+      categoriaCustom: ['Bowls', 'Vasos', 'Conjuntos', 'Canecas', 'Pratos'].includes(product.categoria) ? '' : product.categoria,
       descricao: product.descricao || '',
       imagem_url: product.imagem_url || ''
     });
@@ -283,7 +285,7 @@ const Admin = () => {
                 <DialogTrigger asChild>
                   <Button className="gap-2" onClick={() => {
                     setEditingProduct(null);
-                    setProductForm({ nome: '', preco: '', categoria: '', descricao: '', imagem_url: '' });
+                    setProductForm({ nome: '', preco: '', categoria: '', categoriaCustom: '', descricao: '', imagem_url: '' });
                   }}>
                     <Plus className="w-4 h-4" />
                     Novo Produto
@@ -322,7 +324,7 @@ const Admin = () => {
 
                     <div className="space-y-2">
                       <Label htmlFor="categoria">Categoria</Label>
-                      <Select value={productForm.categoria} onValueChange={(value) => setProductForm({ ...productForm, categoria: value })}>
+                      <Select value={productForm.categoria} onValueChange={(value) => setProductForm({ ...productForm, categoria: value, categoriaCustom: '' })}>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione uma categoria" />
                         </SelectTrigger>
@@ -336,6 +338,19 @@ const Admin = () => {
                         </SelectContent>
                       </Select>
                     </div>
+
+                    {productForm.categoria === 'Outros' && (
+                      <div className="space-y-2">
+                        <Label htmlFor="categoriaCustom">Nome da Categoria</Label>
+                        <Input
+                          id="categoriaCustom"
+                          placeholder="Digite o nome da categoria"
+                          value={productForm.categoriaCustom}
+                          onChange={(e) => setProductForm({ ...productForm, categoriaCustom: e.target.value })}
+                          required
+                        />
+                      </div>
+                    )}
 
                     <div className="space-y-2">
                       <Label htmlFor="imagem_url">URL da Imagem</Label>
