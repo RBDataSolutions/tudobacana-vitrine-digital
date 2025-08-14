@@ -122,17 +122,45 @@ const Admin = () => {
     await supabase.auth.signOut();
   };
 
+  const uploadImage = async (file: File): Promise<string> => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+    const filePath = `products/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('product-images')
+      .upload(filePath, file);
+
+    if (uploadError) {
+      throw uploadError;
+    }
+
+    const { data } = supabase.storage
+      .from('product-images')
+      .getPublicUrl(filePath);
+
+    return data.publicUrl;
+  };
+
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
+      let imageUrl = productForm.imagem_url;
+
+      // Se há um arquivo de imagem selecionado, fazer upload
+      const fileInput = document.getElementById('imagem-file') as HTMLInputElement;
+      if (fileInput?.files?.[0]) {
+        imageUrl = await uploadImage(fileInput.files[0]);
+      }
+
       const productData = {
         nome: productForm.nome,
         preco: parseFloat(productForm.preco),
         categoria: productForm.categoria === 'Outros' ? productForm.categoriaCustom : productForm.categoria,
         descricao: productForm.descricao,
-        imagem_url: productForm.imagem_url
+        imagem_url: imageUrl
       };
 
       if (editingProduct) {
@@ -353,14 +381,16 @@ const Admin = () => {
                     )}
 
                     <div className="space-y-2">
-                      <Label htmlFor="imagem_url">URL da Imagem</Label>
+                      <Label htmlFor="imagem-file">Imagem do Produto</Label>
                       <Input
-                        id="imagem_url"
-                        type="url"
-                        placeholder="https://exemplo.com/imagem.jpg"
-                        value={productForm.imagem_url}
-                        onChange={(e) => setProductForm({ ...productForm, imagem_url: e.target.value })}
+                        id="imagem-file"
+                        type="file"
+                        accept="image/*"
+                        className="cursor-pointer"
                       />
+                      <p className="text-xs text-muted-foreground">
+                        Selecione uma imagem do seu dispositivo
+                      </p>
                     </div>
 
                     <div className="space-y-2">
